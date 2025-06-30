@@ -10,6 +10,8 @@
     "test": "jest"
   },
   "dependencies": {
+    "@ccdilan/react-native-bluetooth-escpos-printer": "github:ccdilan/react-native-bluetooth-escpos-printer",
+    "@react-native-vector-icons/fontawesome6": "^12.0.1",
     "react": "19.0.0",
     "react-native": "0.79.3"
   },

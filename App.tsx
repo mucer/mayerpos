@@ -1,131 +1,123 @@
-/**
- * Sample React Native App
- * https://github.com/facebook/react-native
- *
- * @format
- */
-
-import React from 'react';
-import type {PropsWithChildren} from 'react';
+import React, { useState } from 'react';
 import {
-  ScrollView,
-  StatusBar,
+  Alert,
+  Linking,
+  Modal,
+  PermissionsAndroid,
+  Pressable,
+  SafeAreaView,
   StyleSheet,
   Text,
+  TouchableOpacity,
   useColorScheme,
-  View,
+  View
 } from 'react-native';
-
 import {
-  Colors,
-  DebugInstructions,
-  Header,
-  LearnMoreLinks,
-  ReloadInstructions,
+  Colors
 } from 'react-native/Libraries/NewAppScreen';
+import { Cart } from './src/components/cart.component';
+import { ProductList } from './src/components/product-list.component';
+import { products } from './src/data';
+import { CartProvider } from './src/providers/cart.provider';
+import { ModalComponent } from './src/components/modal.component';
 
-type SectionProps = PropsWithChildren<{
-  title: string;
-}>;
+const handleAndroidPermissions = async () => {
+  const result = await PermissionsAndroid.requestMultiple([
+    PermissionsAndroid.PERMISSIONS.BLUETOOTH_SCAN,
+    PermissionsAndroid.PERMISSIONS.BLUETOOTH_CONNECT,
+  ]);
+  console.debug('permissions', result);
 
-function Section({children, title}: SectionProps): React.JSX.Element {
-  const isDarkMode = useColorScheme() === 'dark';
-  return (
-    <View style={styles.sectionContainer}>
-      <Text
-        style={[
-          styles.sectionTitle,
-          {
-            color: isDarkMode ? Colors.white : Colors.black,
-          },
-        ]}>
-        {title}
-      </Text>
-      <Text
-        style={[
-          styles.sectionDescription,
-          {
-            color: isDarkMode ? Colors.light : Colors.dark,
-          },
-        ]}>
-        {children}
-      </Text>
-    </View>
-  );
-}
+  const hasBluetoothScan = result[PermissionsAndroid.PERMISSIONS.BLUETOOTH_SCAN] === PermissionsAndroid.RESULTS.GRANTED;
+  const hasBluetoothConnect = result[PermissionsAndroid.PERMISSIONS.BLUETOOTH_CONNECT] === PermissionsAndroid.RESULTS.GRANTED;
+  const hasPermissions = hasBluetoothScan && hasBluetoothConnect;
+
+
+  if (!hasPermissions) {
+    Alert.alert(
+      "Permission Required",
+      "Bluetooth Scan permission is required. Please enable it manually in your device settings.",
+      [{ text: "OK", onPress: () => Linking.openSettings() }]
+    );
+    return false;
+  } else {
+    return true;
+  }
+};
 
 function App(): React.JSX.Element {
+  //handleAndroidPermissions();
+
   const isDarkMode = useColorScheme() === 'dark';
 
   const backgroundStyle = {
     backgroundColor: isDarkMode ? Colors.darker : Colors.lighter,
   };
 
-  /*
-   * To keep the template simple and small we're adding padding to prevent view
-   * from rendering under the System UI.
-   * For bigger apps the recommendation is to use `react-native-safe-area-context`:
-   * https://github.com/AppAndFlow/react-native-safe-area-context
-   *
-   * You can read more about it here:
-   * https://github.com/react-native-community/discussions-and-proposals/discussions/827
-   */
-  const safePadding = '5%';
-
   return (
-    <View style={backgroundStyle}>
-      <StatusBar
-        barStyle={isDarkMode ? 'light-content' : 'dark-content'}
-        backgroundColor={backgroundStyle.backgroundColor}
-      />
-      <ScrollView
-        style={backgroundStyle}>
-        <View style={{paddingRight: safePadding}}>
-          <Header/>
+    <View style={[backgroundStyle, { flex: 1 }]}>
+      <CartProvider>
+        {/* Navigation Bar */}
+        <View style={{ flexDirection: 'row', padding: 16, backgroundColor: Colors.primary }}>
+          <Text style={{ flex: 1, fontSize: 20, fontWeight: 'bold', color: Colors.white }}>Kasse</Text>
+          <TouchableOpacity>
+            <Text style={{ fontSize: 20, color: Colors.white }}>Menu</Text>
+          </TouchableOpacity>
         </View>
-        <View
-          style={{
-            backgroundColor: isDarkMode ? Colors.black : Colors.white,
-            paddingHorizontal: safePadding,
-            paddingBottom: safePadding,
-          }}>
-          <Section title="Step One">
-            Edit <Text style={styles.highlight}>App.tsx</Text> to change this
-            screen and then come back to see your edits.
-          </Section>
-          <Section title="See Your Changes">
-            <ReloadInstructions />
-          </Section>
-          <Section title="Debug">
-            <DebugInstructions />
-          </Section>
-          <Section title="Learn More">
-            Read the docs to discover what to do next:
-          </Section>
-          <LearnMoreLinks />
+
+        <View style={{ flex: 1, flexDirection: 'row' }}>
+          <View style={{ flex: 1 }}>
+            <ProductList products={products} />
+          </View>
+          <View style={{ width: 400 }}>
+            <Cart />
+          </View>
         </View>
-      </ScrollView>
+      </CartProvider>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  sectionContainer: {
-    marginTop: 32,
-    paddingHorizontal: 24,
+  centeredView: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
-  sectionTitle: {
-    fontSize: 24,
-    fontWeight: '600',
+  modalView: {
+    margin: 20,
+    backgroundColor: 'white',
+    borderRadius: 20,
+    padding: 35,
+    alignItems: 'center',
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
+    elevation: 5,
   },
-  sectionDescription: {
-    marginTop: 8,
-    fontSize: 18,
-    fontWeight: '400',
+  button: {
+    borderRadius: 20,
+    padding: 10,
+    elevation: 2,
   },
-  highlight: {
-    fontWeight: '700',
+  buttonOpen: {
+    backgroundColor: '#F194FF',
+  },
+  buttonClose: {
+    backgroundColor: '#2196F3',
+  },
+  textStyle: {
+    color: 'white',
+    fontWeight: 'bold',
+    textAlign: 'center',
+  },
+  modalText: {
+    marginBottom: 15,
+    textAlign: 'center',
   },
 });
-
 export default App;
