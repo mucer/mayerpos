@@ -29,21 +29,21 @@ const PaymentModal = ({
         }
     };
 
-    return (
-        <Modal
-            transparent={true}
-            animationType="none"
-            visible={true}
-            onRequestClose={close}
-        >
-            <Pressable
-                style={styles.modalOverlay}
-                onPress={close}
+        return (
+            <Modal
+                transparent={true}
+                animationType="none"
+                visible={true}
+                onRequestClose={close}
             >
                 <Pressable
-                    style={styles.modalContent}
-                    onPress={(e) => e.stopPropagation()} 
+                    style={styles.modalOverlay}
+                    onPress={close}
                 >
+                    <Pressable
+                        style={styles.modalContent}
+                        onPress={(e) => e.stopPropagation()} 
+                    >
                     {/* Total, Received, Change */}
                     <View style={styles.row}>
                         <View style={styles.column}>
@@ -71,7 +71,6 @@ const PaymentModal = ({
                         <View style={styles.grid}>
                             {nums.map((num) => (
                                 <TouchableOpacity
-                                    key={num}
                                     style={styles.numpadButton}
                                     onPress={() => handleNumpadClick(num)}
                                 >

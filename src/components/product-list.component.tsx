@@ -88,7 +88,6 @@ export function ProductList({ products }: ProductListProps) {
         </Modal>
       )}
 
-      {/* Product List */}
       <ScrollView contentContainerStyle={styles.productsGrid}>
         {products.map((product, index) => (
           <TouchableOpacity
@@ -96,7 +95,7 @@ export function ProductList({ products }: ProductListProps) {
             onPress={() => handleProductClick(product)}
             style={styles.productButton}
           >
-            {formatProductName(product)}
+            <Text>{formatProductName(product)}</Text>
             <Text style={styles.productPrice}>{getPriceDisplay(product)}</Text>
           </TouchableOpacity>
         ))}
@@ -124,15 +123,16 @@ const styles = StyleSheet.create({
   },
   productName: {
     fontWeight: "bold",
-    fontSize: 14,
+    fontSize: 18,
   },
   optionName: {
-    fontSize: 12,
+    fontSize: 16,
     color: "#666",
   },
   productPrice: {
     color: "green",
     fontWeight: "bold",
+    fontSize: 16,
     marginTop: 5,
   },
   modalOverlay: {

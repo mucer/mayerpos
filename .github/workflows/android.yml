@@ -1,0 +1,57 @@
+name: "Build Android App"
+on: 
+  push:
+    branches:
+      - main 
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Setup Android SDK
+        run: |
+          yes | $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager --licenses
+          $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager "platform-tools" "platforms;android-35"
+
+      - name: Setup Java 
+        uses: actions/setup-java@v2
+        with:
+          java-version: '21'
+          distribution: 'adopt'
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with: 
+          node-version: '18'
+
+      - name: Install NPM Dependencies
+        run: npm ci
+
+      - name: Patch ccdilan Bluetooth Printer SDK versions
+        run: |
+          GRADLE_FILE="node_modules/@ccdilan/react-native-bluetooth-escpos-printer/android/build.gradle"
+          if [ -f "$GRADLE_FILE" ]; then
+            sed -i 's/compileSdkVersion *[0-9]\+/compileSdkVersion 35/' "$GRADLE_FILE"
+            sed -i 's/targetSdkVersion *[0-9]\+/targetSdkVersion 35/' "$GRADLE_FILE"
+            echo "Patched $GRADLE_FILE to use SDK 35"
+          else
+            echo "$GRADLE_FILE not found"
+            exit 1
+          fi
+
+      - name: Build App
+        run: |
+          cd ./android
+          chmod +x ./gradlew
+          ./gradlew assembleRelease
+
+      - name: Upload APK to Artifacts
+        uses: actions/upload-artifact@v4
+        with: 
+          name: app
+          path: ./android/app/build/outputs/apk/release/app-release.apk
+          retention-days: 3

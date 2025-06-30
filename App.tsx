@@ -1,3 +1,4 @@
+import FontAwesome6 from '@react-native-vector-icons/fontawesome6';
 import React, { useState } from 'react';
 import {
   Alert,
@@ -6,6 +7,7 @@ import {
   PermissionsAndroid,
   Pressable,
   SafeAreaView,
+  SafeAreaViewBase,
   StyleSheet,
   Text,
   TouchableOpacity,
@@ -19,49 +21,46 @@ import { Cart } from './src/components/cart.component';
 import { ProductList } from './src/components/product-list.component';
 import { products } from './src/data';
 import { CartProvider } from './src/providers/cart.provider';
-import { ModalComponent } from './src/components/modal.component';
+import { CartItem } from './src/models/cart-item';
+import { DeviceModal } from './src/components/device.modal';
+import { PrintService } from './src/service/print.service';
 
-const handleAndroidPermissions = async () => {
-  const result = await PermissionsAndroid.requestMultiple([
-    PermissionsAndroid.PERMISSIONS.BLUETOOTH_SCAN,
-    PermissionsAndroid.PERMISSIONS.BLUETOOTH_CONNECT,
-  ]);
-  console.debug('permissions', result);
-
-  const hasBluetoothScan = result[PermissionsAndroid.PERMISSIONS.BLUETOOTH_SCAN] === PermissionsAndroid.RESULTS.GRANTED;
-  const hasBluetoothConnect = result[PermissionsAndroid.PERMISSIONS.BLUETOOTH_CONNECT] === PermissionsAndroid.RESULTS.GRANTED;
-  const hasPermissions = hasBluetoothScan && hasBluetoothConnect;
-
-
-  if (!hasPermissions) {
-    Alert.alert(
-      "Permission Required",
-      "Bluetooth Scan permission is required. Please enable it manually in your device settings.",
-      [{ text: "OK", onPress: () => Linking.openSettings() }]
-    );
-    return false;
-  } else {
-    return true;
-  }
-};
+const printService = new PrintService()
 
 function App(): React.JSX.Element {
   //handleAndroidPermissions();
 
   const isDarkMode = useColorScheme() === 'dark';
+  const [deviceAddress, setDeviceAddress] = useState<string | null>(null);
+  const [showDevicePopup, setShowDevicePopup] = useState(false);
 
   const backgroundStyle = {
     backgroundColor: isDarkMode ? Colors.darker : Colors.lighter,
   };
 
+  const print = async (items: CartItem[]) => {
+    if (!deviceAddress) {
+      setShowDevicePopup(true)
+      return false
+
+    }
+    if (items.length) {
+      await printService.printBon(deviceAddress, items)
+    }
+    return true
+  };
+
   return (
     <View style={[backgroundStyle, { flex: 1 }]}>
+      {showDevicePopup && (
+        <DeviceModal
+          onSelect={setDeviceAddress}
+          close={() => setShowDevicePopup(false)} />)}
       <CartProvider>
-        {/* Navigation Bar */}
-        <View style={{ flexDirection: 'row', padding: 16, backgroundColor: Colors.primary }}>
-          <Text style={{ flex: 1, fontSize: 20, fontWeight: 'bold', color: Colors.white }}>Kasse</Text>
-          <TouchableOpacity>
-            <Text style={{ fontSize: 20, color: Colors.white }}>Menu</Text>
+        <View style={{ flexDirection: 'row', paddingTop: 30, backgroundColor: Colors.primary }}>
+          <Text style={{ flex: 1, padding: 12, fontSize: 20, fontWeight: 'bold', color: Colors.white }}>Bons</Text>
+          <TouchableOpacity style={{ padding: 12 }} onPress={() => setShowDevicePopup(true)}>
+            <FontAwesome6 name="bars" iconStyle="solid" color="white" size={20} />
           </TouchableOpacity>
         </View>
 
@@ -70,7 +69,7 @@ function App(): React.JSX.Element {
             <ProductList products={products} />
           </View>
           <View style={{ width: 400 }}>
-            <Cart />
+            <Cart print={print} />
           </View>
         </View>
       </CartProvider>
