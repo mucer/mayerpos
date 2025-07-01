@@ -27,26 +27,23 @@ export function ProductList({ products }: ProductListProps) {
     }
   };
 
+  const numFormat = new Intl.NumberFormat("de-DE", {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+  });
+
   const getPriceDisplay = (product: Product) => {
     if (product.options.length === 1) {
-      return `${product.options[0].price.toFixed(2)} €`;
+      return `${numFormat.format(product.options[0].price)} €`;
     } else {
       const minPrice = Math.min(...product.options.map((opt) => opt.price));
-      return `ab ${minPrice.toFixed(2)} €`;
+      return `ab ${numFormat.format(minPrice)} €`;
     }
   };
 
-  const formatProductName = (product: Product) => {
-    if (product.options?.length === 1) {
-      return (
-        <View>
-          <Text style={styles.productName}>{product.name}</Text>
-          <Text style={styles.optionName}>{product.options[0].name}</Text>
-        </View>
-      );
-    }
-    return <Text style={styles.productName}>{product.name}</Text>;
-  };
+  const formatProductName = (product: Product) => (
+    <Text style={styles.productName}>{product.name}</Text>
+  );
 
   return (
     <View style={styles.productsContainer}>
@@ -63,7 +60,7 @@ export function ProductList({ products }: ProductListProps) {
           >
             <Pressable
               style={styles.modalContent}
-              onPress={(e) => e.stopPropagation()} 
+              onPress={(e) => e.stopPropagation()}
             >
               <View style={styles.modalHeader}>
                 <Text style={styles.modalTitle}>{showOptionPopup.name}</Text>
@@ -79,7 +76,7 @@ export function ProductList({ products }: ProductListProps) {
                     onPress={() => handleOptionSelect(option)}
                   >
                     <Text style={styles.optionText}>{option.name}</Text>
-                    <Text style={styles.optionPrice}>€{option.price.toFixed(2)}</Text>
+                    <Text style={styles.optionPrice}>€{numFormat.format(option.price)}</Text>
                   </TouchableOpacity>
                 ))}
               </View>

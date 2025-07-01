@@ -29,30 +29,43 @@ const PaymentModal = ({
         }
     };
 
-        return (
-            <Modal
-                transparent={true}
-                animationType="none"
-                visible={true}
-                onRequestClose={close}
+    const printNumpad = (num: string) => (<TouchableOpacity
+        style={styles.numpadButton}
+        onPress={() => handleNumpadClick(num)}
+    >
+        <Text style={styles.buttonText}>{num}</Text>
+    </TouchableOpacity>
+    );
+
+    const numFormat = new Intl.NumberFormat("de-DE", {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2,
+    });
+
+
+    return (
+        <Modal
+            transparent={true}
+            animationType="none"
+            visible={true}
+            onRequestClose={close}
+        >
+            <Pressable
+                style={styles.modalOverlay}
+                onPress={close}
             >
                 <Pressable
-                    style={styles.modalOverlay}
-                    onPress={close}
+                    style={styles.modalContent}
+                    onPress={(e) => e.stopPropagation()}
                 >
-                    <Pressable
-                        style={styles.modalContent}
-                        onPress={(e) => e.stopPropagation()} 
-                    >
-                    {/* Total, Received, Change */}
                     <View style={styles.row}>
                         <View style={styles.column}>
                             <Text style={styles.label}>Gesamt</Text>
-                            <Text style={styles.value}>{total.toFixed(2)}€</Text>
+                            <Text style={styles.value}>{numFormat.format(total)}€</Text>
                         </View>
                         <View style={styles.column}>
                             <Text style={styles.label}>Erhalten</Text>
-                            <Text style={styles.value}>{received.toFixed(2)}€</Text>
+                            <Text style={styles.value}>{numFormat.format(received)}€</Text>
                         </View>
                         <View style={styles.column}>
                             <Text style={styles.label}>Rückgeld</Text>
@@ -67,18 +80,26 @@ const PaymentModal = ({
                         </View>
                     </View>
 
-                    {[["1", "2", "3"], ["4", "5", "6"], ["7", "8", "9"], [",", "0", "⌫"]].map((nums) => (
-                        <View style={styles.grid}>
-                            {nums.map((num) => (
-                                <TouchableOpacity
-                                    style={styles.numpadButton}
-                                    onPress={() => handleNumpadClick(num)}
-                                >
-                                    <Text style={styles.buttonText}>{num}</Text>
-                                </TouchableOpacity>
-                            ))}
-                        </View>
-                    ))}
+                    <View style={styles.grid}>
+                        {printNumpad("1")}
+                        {printNumpad("2")}
+                        {printNumpad("3")}
+                    </View>
+                    <View style={styles.grid}>
+                        {printNumpad("4")}
+                        {printNumpad("5")}
+                        {printNumpad("6")}
+                    </View>
+                    <View style={styles.grid}>
+                        {printNumpad("7")}
+                        {printNumpad("8")}
+                        {printNumpad("9")}
+                    </View>
+                    <View style={styles.grid}>
+                        {printNumpad(",")}
+                        {printNumpad("0")}
+                        {printNumpad("⌫")}
+                    </View>
 
                     <View style={styles.row}>
                         <TouchableOpacity

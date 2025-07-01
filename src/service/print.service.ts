@@ -13,15 +13,15 @@ export class PrintService {
         await escposPrinter.printerAlign(escposPrinter.ALIGN.LEFT);
 
         // print header with date: "Bon DD.MM.YYYY - HH:mm"
-       // const now = new Date();
-       // const formattedDate = `${now.getDate().toString().padStart(2, '0')}.${(now.getMonth() + 1).toString().padStart(2, '0')}.${now.getFullYear()} - ${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}`;
-       // this.printText(`Bon ${formattedDate}\n\n`);
+        // const now = new Date();
+        // const formattedDate = `${now.getDate().toString().padStart(2, '0')}.${(now.getMonth() + 1).toString().padStart(2, '0')}.${now.getFullYear()} - ${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}`;
+        // this.printText(`Bon ${formattedDate}\n\n`);
 
         for (const item of items) {
-            const text = `${item.quantity}x ${item.product.name}`
+            const text = `${item.quantity}x ${item.product.name}`.substring(0, 15)
                 + (item.option.name ? ` - ${item.option.name}` : '');
-            this.printText(text+"\n")
-            
+            this.printText(text + "\n")
+
         }
         await escposPrinter.printAndFeed(30)
     }
@@ -29,11 +29,11 @@ export class PrintService {
 
     private async printText(text: string) {
         await escposPrinter.printText(
-            this.encodeToCP858(text)+"\n",
+            this.encodeToCP858(text) + "\n",
             { encoding: 'ISO-8859-1', heigthtimes: 1, widthtimes: 1 });
     }
-    
-   private encodeToCP858(text: string) {
+
+    private encodeToCP858(text: string) {
         const cp858Map: { [key: string]: string } = {
             'Ä': '\x8E',
             'ä': '\x84',

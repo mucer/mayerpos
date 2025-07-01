@@ -29,6 +29,11 @@ export function Cart({ print }: CardProps) {
         }
     };
 
+    const numFormat = new Intl.NumberFormat("de-DE", {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2,
+    });
+
     return (
         <View style={styles.cartContainer}>
             {showPaymentPopup && (
@@ -60,14 +65,14 @@ export function Cart({ print }: CardProps) {
                             <FontAwesome6 name="plus" iconStyle="solid" />
                         </TouchableOpacity>
                         <View style={styles.cartItemPrice}>
-                            <Text>{(item.option.price * item.quantity).toFixed(2)}€</Text>
+                            <Text>{numFormat.format(item.option.price * item.quantity)}€</Text>
                         </View>
                     </View>
                 ))
                 )}
             </ScrollView>
 
-            <Text style={styles.totalText}>Gesamt: {total.toFixed(2)} €</Text>
+            <Text style={styles.totalText}>Gesamt: {numFormat.format(total)} €</Text>
 
             <View style={styles.actionButtons}>
                 <TouchableOpacity
@@ -106,7 +111,7 @@ const styles = StyleSheet.create({
     cartItemDetails: { flex: 1 },
     productName: { fontSize: 16 },
     optionName: { fontSize: 14, color: "#666" },
-    quantityButton: { padding: 10, borderWidth: 1, borderColor: "#ccc", borderRadius: 5 },
+    quantityButton: { padding: 15, borderWidth: 1, borderColor: "#ccc", borderRadius: 5 },
     quantityText: { fontSize: 16, width: 30, textAlign: "center" },
     cartItemPrice: { fontSize: 16, alignItems: "flex-end", width: 60 },
     totalText: { fontSize: 18, fontWeight: "bold" },

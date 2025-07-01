@@ -33,7 +33,7 @@ export const products: Product[] = [
         ],
     },
     {
-        name: "Hähnchens.",
+        name: "Hähnchenschnitzel",
         options: [
             { name: "", price: 4.5 },
             { name: "auf Brötchen", price: 5 },
@@ -81,7 +81,7 @@ export const products: Product[] = [
         ],
     },
     {
-        name: "Wurstsalat", 
+        name: "Wurstsalat",
         options: [
             { name: "mit Brötchen", price: 8 },
         ],
@@ -107,13 +107,13 @@ export const products: Product[] = [
         ],
     },
     {
-        name: "Brezel", 
+        name: "Brezel",
         options: [
             { name: "", price: 1.2 },
         ],
     },
     {
-        name: "Kuchen", 
+        name: "Kuchen",
         options: [
             { name: "", price: 3.5 },
         ],
