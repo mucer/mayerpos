@@ -2,6 +2,39 @@ import { Product } from "./models/product";
 
 export const products: Product[] = [
     {
+        name: "Pommes",
+        options: [
+            { name: "", price: 4.5 },
+        ]
+    },
+    {
+        name: "Messwurst (Paar)",
+        options: [
+            { name: "im Bröchten", price: 4.5 },
+        ],
+    },
+    {
+        name: "Messwurst (Stück)",
+        options: [
+            { name: "im Bröchten", price: 2.5 },
+        ],
+    },
+    {
+        name: "LKW",
+        options: [
+            { name: "", price: 3.5 },
+        ],
+    },
+    {
+        name: "Brötchen",
+        options: [
+            { name: "", price: 0.5 },
+        ],
+    }
+];
+
+export const productsIpfmess: Product[] = [
+    {
         name: "Messwurst (Paar)",
         flat: true,
         options: [

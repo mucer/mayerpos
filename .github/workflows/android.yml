@@ -1,8 +1,5 @@
 name: "Build Android App"
-on:
-  push:
-    branches:
-      - main
+on: push
 
 jobs:
   build:
@@ -58,7 +55,7 @@ jobs:
 
       # create a release when on branch main
       - name: Create Release
-        if: github.ref == 'refs/heads/main'
+        if: github.ref_type == 'tag'
         uses: softprops/action-gh-release@v2
         with:
           files: ./android/app/build/outputs/apk/release/app-release.apk
